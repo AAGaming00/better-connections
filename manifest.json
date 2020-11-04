@@ -1,7 +1,7 @@
 {
-  "name": "better connections",
-  "description": "Plugin Description",
-  "author": "Plugin Author",
-  "license": "Plugin License",
+  "name": "Better Connections",
+  "description": "Adds moore connections to Discord.",
+  "author": "AAGaming",
+  "license": "MIT",
   "version": "0.0.1"
 }

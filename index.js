@@ -44,7 +44,7 @@ module.exports = class BetterConnections extends Plugin {
         return accounts.gitlab;
       },
       getPlatformUserUrl: (account) => {
-        const username = account.id;
+        const username = account.name;
         return `https://gitlab.com/${encodeURIComponent(username)}`;
       },
       onDisconnect: async (account) => {

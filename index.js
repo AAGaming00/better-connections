@@ -30,7 +30,7 @@ module.exports = class BetterConnections extends Plugin {
         white: `${this.baseUrl}/gitlab-white.svg`
       },
       enabled: true,
-      fetchAccount: async (id) => {
+      fetchAccount: window._.debounce(async (id) => {
         let accounts = [];
         try {
           if (!id) {
@@ -42,7 +42,8 @@ module.exports = class BetterConnections extends Plugin {
         // Let it fail silently
         }
         return accounts.gitlab;
-      },
+      }, 500, { leading: true,
+        trailing: false }),
       getPlatformUserUrl: (account) => {
         const username = account.name;
         return `https://gitlab.com/${encodeURIComponent(username)}`;

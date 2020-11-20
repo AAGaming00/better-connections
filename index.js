@@ -1,13 +1,14 @@
 const { Plugin } = require('powercord/entities');
-const { React, getModule, getModuleByDisplayName } = require('powercord/webpack');
+const { React, getModule } = require('powercord/webpack');
 const { inject, uninject } = require('powercord/injector');
-const { get, del } = require('powercord/http');
+const { get } = require('powercord/http');
+
 const Connection = require('./components/ConnectAccountButton');
 
 const cachedGet = window._.memoize((url) => get(url).then(r => r.body), url => {
   setTimeout(() => {
     cachedGet.cache.delete(url);
-  }, 1 * 60e3);
+  }, 60e3);
   return url;
 });
 
@@ -19,13 +20,14 @@ module.exports = class BetterConnections extends Plugin {
   }
 
   async startPlugin () {
-    this.loadStylesheet('style.scss');
     const { getCurrentUser } = await getModule([ 'getCurrentUser' ]);
+
     this.classes = {
       ...await getModule([ 'headerInfo', 'nameTag' ]),
       ...await getModule([ 'modal', 'inner' ]),
       ...await getModule([ 'connection', 'integration' ])
     };
+    this.loadStylesheet('style.scss');
     this.injectSettings();
     powercord.api.connections.registerConnection({
       type: 'gitlab',
@@ -39,6 +41,7 @@ module.exports = class BetterConnections extends Plugin {
       enabled: true,
       fetchAccount: async (id) => {
         let accounts = [];
+
         try {
           accounts = await cachedGet(`${this.baseUrl}/api/connections/${id || getCurrentUser().id}`);
         } catch (e) {
@@ -46,27 +49,26 @@ module.exports = class BetterConnections extends Plugin {
         }
         return accounts.gitlab;
       },
-      getPlatformUserUrl: (account) => {
-        const username = account.name;
-        return `https://gitlab.com/${encodeURIComponent(username)}`;
-      },
+      getPlatformUserUrl: (account) => `https://gitlab.com/${encodeURIComponent(account.name)}}`,
       onDisconnect: async (account) => {
         window.open(`${this.baseUrl}/api/link/${account.type}?delete=true`);
       },
-      onConnect: async () => {
-        window.open(`${this.baseUrl}/api/link/gitlab`);
+      onConnect: async (account) => {
+        window.open(`${this.baseUrl}/api/link/${account.type}`);
       }
     });
   }
 
   async injectSettings () {
-    const UserSettingsConnections = await getModule(m => m.default && m.default.displayName === 'UserSettingsConnections');
+    const UserSettingsConnections = await getModule((m) => m.default?.displayName === 'UserSettingsConnections');
+
     inject('better-connections-settings', UserSettingsConnections, 'default', (args, res) => {
       if (!res.props.children) {
         return res;
       }
 
       const availableConnections = res.props.children[0].props.children[2].props.children;
+
       powercord.api.connections.filter((e) => e._bc).forEach((e) => {
         availableConnections.push(React.createElement(Connection, {
           className: this.classes.accountBtn,

@@ -10,9 +10,11 @@ class Popout extends React.PureComponent {
     console.log(this.scriptRef.current.ownerDocument.defaultView);
     this.props.resolve(this.scriptRef.current.ownerDocument.defaultView);
     const win = this.scriptRef.current.ownerDocument.defaultView;
-    //delete win.opener;
-    //delete win.DiscordNative;
-    //delete win.require;
+    /*
+     * delete win.opener;
+     * delete win.DiscordNative;
+     * delete win.require;
+     */
     let ready1 = false;
     let ready2 = false;
     const interval = setInterval(() => {
@@ -41,7 +43,8 @@ class Popout extends React.PureComponent {
 module.exports = function (url, name, id) {
   return new Promise((resolve) => {
     const popoutModule = getModule([ 'setAlwaysOnTop', 'open' ], false);
-    const PopoutWindow = getModule(m => m.DecoratedComponent && m.DecoratedComponent.render, false);
+    const PopoutWindow = getModule((m) => m.DecoratedComponent?.render, false);
+
     popoutModule.open(id, (key) =>
       React.createElement(PopoutWindow, {
         windowKey: key,

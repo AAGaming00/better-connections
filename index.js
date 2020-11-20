@@ -4,6 +4,13 @@ const { inject, uninject } = require('powercord/injector');
 const { get, del } = require('powercord/http');
 const Connection = require('./components/ConnectAccountButton');
 
+const cachedGet = window._.memoize((url) => get(url).then(r => r.body), url => {
+  setTimeout(() => {
+    cachedGet.cache.delete(url);
+  }, 1 * 60e3);
+  return url;
+});
+
 module.exports = class BetterConnections extends Plugin {
   constructor () {
     super();
@@ -30,20 +37,15 @@ module.exports = class BetterConnections extends Plugin {
         white: `${this.baseUrl}/gitlab-white.svg`
       },
       enabled: true,
-      fetchAccount: window._.debounce(async (id) => {
+      fetchAccount: async (id) => {
         let accounts = [];
         try {
-          if (!id) {
-            accounts = await get(`${this.baseUrl}/api/connections/${getCurrentUser().id}`).then(r => r.body);
-          } else {
-            accounts = await get(`${this.baseUrl}/api/connections/${id}`).then(r => r.body);
-          }
+          accounts = await cachedGet(`${this.baseUrl}/api/connections/${id || getCurrentUser().id}`);
         } catch (e) {
         // Let it fail silently
         }
         return accounts.gitlab;
-      }, 500, { leading: true,
-        trailing: false }),
+      },
       getPlatformUserUrl: (account) => {
         const username = account.name;
         return `https://gitlab.com/${encodeURIComponent(username)}`;

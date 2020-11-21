@@ -1,10 +1,12 @@
 const { React, getModule } = require('powercord/webpack');
 
 const { Tooltip } = require('powercord/components');
-
 let classes;
 setImmediate(async () => {
-  classes = { ...await getModule([ 'wrapper', 'inner' ]) };
+  classes = {
+    ...await getModule([ 'wrapper', 'inner' ]),
+    ...await getModule([ 'accountBtn' ])
+  };
 });
 
 module.exports = class ConnectAccountButton extends React.Component {
@@ -20,10 +22,20 @@ module.exports = class ConnectAccountButton extends React.Component {
 
   render () {
     return <>
-      <Tooltip color='black' postion='top' text={this.connection.name}>
-        <div className={[ classes.wrapper, this.props.className ].filter(Boolean).join(' ')}>
+      <Tooltip
+        disableTooltipPointerEvents = {true}
+        hideOnClick = {true}
+        position = "top"
+        color = "black"
+        forceOpen = {false}
+        spacing = {8}
+        shouldShow = {true}
+        allowOverflow = {false}
+        text={this.connection.name}
+        className={[ classes.wrapper, classes.accountBtn, this.props.className ].filter(Boolean).join(' ')}>
+        <div>
           <button
-            className={[ classes.inner, this.props.innerClassName ].filter(Boolean).join(' ')}
+            className={[ classes.inner, classes.accountBtnInner, this.props.innerClassName ].filter(Boolean).join(' ')}
             type='button'
             disabled={this.props.disabled}
             style={{ backgroundImage: `url(${this.connection.icon.color})` }}

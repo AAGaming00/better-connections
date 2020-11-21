@@ -1,62 +1,21 @@
 const { Plugin } = require('powercord/entities');
-const { React, getModule, getModuleByDisplayName } = require('powercord/webpack');
+const { React, getModule } = require('powercord/webpack');
 const { inject, uninject } = require('powercord/injector');
-const { get, del } = require('powercord/http');
 const Connection = require('./components/ConnectAccountButton');
-
-const cachedGet = window._.memoize((url) => get(url).then(r => r.body), url => {
-  setTimeout(() => {
-    cachedGet.cache.delete(url);
-  }, 1 * 60e3);
-  return url;
-});
+const ConnectionManager = require('./connections');
 
 module.exports = class BetterConnections extends Plugin {
-  constructor () {
-    super();
-
-    this.baseUrl = 'https://better-connections.vercel.app';
-  }
-
   async startPlugin () {
     this.loadStylesheet('style.scss');
-    const { getCurrentUser } = await getModule([ 'getCurrentUser' ]);
+
     this.classes = {
       ...await getModule([ 'headerInfo', 'nameTag' ]),
       ...await getModule([ 'modal', 'inner' ]),
       ...await getModule([ 'connection', 'integration' ])
     };
     this.injectSettings();
-    powercord.api.connections.registerConnection({
-      type: 'gitlab',
-      name: 'GitLab',
-      color: '#FC6D27',
-      _bc: true,
-      icon: {
-        color: `${this.baseUrl}/gitlab-color.svg`,
-        white: `${this.baseUrl}/gitlab-white.svg`
-      },
-      enabled: true,
-      fetchAccount: async (id) => {
-        let accounts = [];
-        try {
-          accounts = await cachedGet(`${this.baseUrl}/api/connections/${id || getCurrentUser().id}`);
-        } catch (e) {
-        // Let it fail silently
-        }
-        return accounts.gitlab;
-      },
-      getPlatformUserUrl: (account) => {
-        const username = account.name;
-        return `https://gitlab.com/${encodeURIComponent(username)}`;
-      },
-      onDisconnect: async (account) => {
-        window.open(`${this.baseUrl}/api/link/${account.type}?delete=true`);
-      },
-      onConnect: async () => {
-        window.open(`${this.baseUrl}/api/link/gitlab`);
-      }
-    });
+    this.manager = new ConnectionManager();
+    this.manager.start();
   }
 
   async injectSettings () {
@@ -73,7 +32,8 @@ module.exports = class BetterConnections extends Plugin {
           innerClassName: this.classes.accountBtnInner,
           disabled: !e.enabled,
           type: e.type,
-          onConnect: e.onConnect
+          onConnect: e.onConnect,
+          key: e.type
         }));
       });
 
@@ -84,6 +44,6 @@ module.exports = class BetterConnections extends Plugin {
 
   pluginWillUnload () {
     uninject('better-connections-settings');
-    powercord.api.connections.unregisterConnection('gitlab');
+    this.manager.stop();
   }
 };

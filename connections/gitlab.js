@@ -18,15 +18,12 @@ module.exports = (manager) => {
       }
       return accounts.gitlab;
     },
-    getPlatformUserUrl: (account) => {
-      const username = account.name;
-      return `https://gitlab.com/${encodeURIComponent(username)}`;
-    },
+    getPlatformUserUrl: (account) => `https://gitlab.com/${encodeURIComponent(account.name)}`;
     onDisconnect: async (account) => {
       window.open(`${manager.baseUrl}/api/link/${account.type}?delete=true`);
     },
-    onConnect: async () => {
-      window.open(`${manager.baseUrl}/api/link/gitlab`);
+    onConnect: async (account) => {
+      window.open(`${manager.baseUrl}/api/link/${account.type}`);
     }
   });
   return 'gitlab';

@@ -1,6 +1,6 @@
 const { React, getModule } = require('powercord/webpack');
-
 const { Tooltip } = require('powercord/components');
+
 let classes;
 setImmediate(async () => {
   classes = {

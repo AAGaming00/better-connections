@@ -10,7 +10,7 @@ module.exports = class ConnectionManager {
     this.cachedGet = window._.memoize((url) => get(url).then(r => r.body), url => {
       setTimeout(() => {
         this.cachedGet.cache.delete(url);
-      }, 1 * 60e3);
+      }, 60e3);
       return url;
     });
 

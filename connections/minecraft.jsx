@@ -11,6 +11,7 @@ module.exports = (manager) => {
     enabled: true,
     fetchAccount: async (id) => {
       let accounts = [];
+
       try {
         accounts = await manager.cachedGet(`${manager.baseUrl}/api/connections/${id || manager.getCurrentUser().id}`);
       } catch (e) {
@@ -19,10 +20,10 @@ module.exports = (manager) => {
       return accounts.minecraft;
     },
     onDisconnect: async () => {
-      window.open(`${manager.baseUrl}/api/link/minecraft?delete=true`);
+      window.open(`${manager.baseUrl}/api/link/${account.type}?delete=true`);
     },
     onConnect: async () => {
-      window.open(`${manager.baseUrl}/api/link/minecraft`);
+      window.open(`${manager.baseUrl}/api/link/${account.type}`);
     }
   });
   return 'minecraft';

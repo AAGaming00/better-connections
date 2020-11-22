@@ -1,13 +1,10 @@
 const { Plugin } = require('powercord/entities');
 const { React, getModule } = require('powercord/webpack');
 const { inject, uninject } = require('powercord/injector');
-<<<<<<< HEAD
-const Connection = require('./components/ConnectAccountButton');
-const ConnectionManager = require('./connections');
-=======
 const { get } = require('powercord/http');
 
 const Connection = require('./components/ConnectAccountButton');
+const ConnectionManager = require('./connections');
 
 const cachedGet = window._.memoize((url) => get(url).then(r => r.body), url => {
   setTimeout(() => {
@@ -15,27 +12,20 @@ const cachedGet = window._.memoize((url) => get(url).then(r => r.body), url => {
   }, 60e3);
   return url;
 });
->>>>>>> aecf3a88e9c1fc7f2d8469305fe9aad4c1412ff0
 
 module.exports = class BetterConnections extends Plugin {
   async startPlugin () {
-<<<<<<< HEAD
-    this.loadStylesheet('style.scss');
-=======
     const { getCurrentUser } = await getModule([ 'getCurrentUser' ]);
->>>>>>> aecf3a88e9c1fc7f2d8469305fe9aad4c1412ff0
 
     this.classes = {
       ...await getModule([ 'headerInfo', 'nameTag' ]),
       ...await getModule([ 'modal', 'inner' ]),
       ...await getModule([ 'connection', 'integration' ])
     };
-    this.loadStylesheet('style.scss');
     this.injectSettings();
-<<<<<<< HEAD
+    this.loadStylesheet('style.scss');
     this.manager = new ConnectionManager();
     this.manager.start();
-=======
     powercord.api.connections.registerConnection({
       type: 'gitlab',
       name: 'GitLab',
@@ -64,7 +54,6 @@ module.exports = class BetterConnections extends Plugin {
         window.open(`${this.baseUrl}/api/link/${account.type}`);
       }
     });
->>>>>>> aecf3a88e9c1fc7f2d8469305fe9aad4c1412ff0
   }
 
   async injectSettings () {

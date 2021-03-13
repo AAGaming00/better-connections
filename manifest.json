@@ -3,5 +3,6 @@
   "description": "Adds moore connections to Discord.",
   "author": "AAGaming",
   "license": "MIT",
-  "version": "0.0.1"
+  "version": "1.0.0",
+  "permissions": ["ext_api"]
 }

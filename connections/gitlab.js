@@ -23,7 +23,7 @@ module.exports = (manager) => {
       return `https://gitlab.com/${encodeURIComponent(username)}`;
     },
     onDisconnect: async (account) => {
-      window.open(`${manager.baseUrl}/api/delete?type=${account.type}`);
+      window.open(`${manager.baseUrl}/api/link/delete?type=${account.type}`);
     },
     onConnect: async () => {
       window.open(`${manager.baseUrl}/api/link/gitlab`);

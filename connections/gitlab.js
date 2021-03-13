@@ -5,7 +5,7 @@ module.exports = (manager) => {
     color: '#FC6D27',
     _bc: true,
     icon: {
-      color: `${manager.baseUrl}/gitlab-color.svg`,
+      color: `${manager.baseUrl}/gitlab.svg`,
       white: `${manager.baseUrl}/gitlab-white.svg`
     },
     enabled: true,

@@ -23,7 +23,7 @@ module.exports = (manager) => {
         return `https://osu.ppy.sh/users/${encodeURIComponent(username)}`;
       },
       onDisconnect: async (account) => {
-        window.open(`${manager.baseUrl}/api/link/${account.type}?delete=true`);
+        window.open(`${manager.baseUrl}/api/delete?type=${account.type}`);
       },
       onConnect: async () => {
         window.open(`${manager.baseUrl}/api/link/osu`);

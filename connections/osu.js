@@ -19,8 +19,8 @@ module.exports = (manager) => {
         return accounts.osu;
       },
       getPlatformUserUrl: (account) => {
-        const username = account.name;
-        return `https://osu.com/${encodeURIComponent(username)}`;
+        const username = account.id;
+        return `https://osu.ppy.sh/users/${encodeURIComponent(username)}`;
       },
       onDisconnect: async (account) => {
         window.open(`${manager.baseUrl}/api/link/${account.type}?delete=true`);
